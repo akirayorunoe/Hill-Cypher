@@ -5,10 +5,6 @@ using namespace std;
 
 string formatString(string a, int &l)
 {
-	//chuyen string ve so chan
-	if (l % 2 != 0) {
-		a += "z";
-	}
 	//uppercase
 	for (int i = 0; i<l; i++)
 	{
@@ -22,11 +18,19 @@ string formatString(string a, int &l)
 			{
 				a[j] = a[j + 1];
 			}
+			//uppercase khi dich phan tu len 
+			if (97 <= (int)a[i] && (int)a[i] <= 122) {
+				a[i] -= 32;
+			}
 			l--;
 		}
 	}
 	//resize lai chuoi
 	a.resize(l);
+	//chuyen string ve so chan
+	if (l % 2 != 0) {
+		a += "Z";
+	}
 	return a;
 }
 
