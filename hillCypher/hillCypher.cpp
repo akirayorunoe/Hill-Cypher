@@ -3,15 +3,14 @@
 #include <string>
 using namespace std;
 
-string formatString(string a)
+string formatString(string a, int &l)
 {
-	int n = a.length();
 	//chuyen string ve so chan
-	if (n % 2 != 0) {
+	if (l % 2 != 0) {
 		a += "z";
 	}
 	//uppercase
-	for (int i = 0; i<n; i++)
+	for (int i = 0; i<l; i++)
 	{
 		if (97 <= (int)a[i] && (int)a[i] <= 122) {
 			a[i] -= 32;
@@ -19,13 +18,15 @@ string formatString(string a)
 		//remove space
 		if ((int)a[i] == 32) {
 			//cout <<endl<<"space"<< a[i];
-			for (int j = i; j<n - 1; j++)
+			for (int j = i; j<l - 1; j++)
 			{
 				a[j] = a[j + 1];
 			}
-			n--;
+			l--;
 		}
 	}
+	//resize lai chuoi
+	a.resize(l);
 	return a;
 }
 
@@ -34,7 +35,8 @@ int main()
 	string str;
 	cout << "Nhap chuoi:";
 	getline(cin,str);
-	str = formatString(str);
-	cout << str;
+	int l = str.length();
+	str = formatString(str, l);
+	cout << str<<endl;
 	system("pause");
 }
