@@ -1,11 +1,12 @@
 // Example program
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 string formatString(string a, int &l,int size)
 {
-	//<2x2(<4 char) or <3x3(<9 char) 
 	//uppercase
 	for (int i = 0; i<l; i++)
 	{
@@ -73,6 +74,69 @@ void printMatrix(int **a, int hang, int cot) {
 	}
 }
 
+bool checkMod(int **a,int size)
+{
+	switch (size)
+	{
+	case 2:
+		if ((a[0][0] * a[1][1] - a[0][1] * a[1][0]) % 26 > 0 && (a[0][0] * a[1][1] - a[0][1] * a[1][0])<=25 && (a[0][0] * a[1][1] - a[0][1] * a[1][0])%2 !=0)
+		{
+			cout << endl<< (a[0][0] * a[1][1] - a[0][1] * a[1][0])<<endl;
+			return true;
+		}
+		break;
+	case 3: 
+		if ((a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) % 26 > 0 && (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) <= 25 && (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) % 2 !=0)
+		{
+			cout <<endl<< (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]))<<endl;
+			return true;
+		}
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
+int** generateKey(int size)
+{
+	int **m;
+	srand(time(NULL));
+	m = new int*[size];
+	
+	do {
+		for (int i = 0; i < size; i++)
+		{
+			m[i] = new int[size];
+			for (int j = 0; j < size; j++)
+			{
+				int a = rand() % 25 + 0;
+				m[i][j] = a;
+			}
+		}
+	} while (!checkMod(m, size));
+	return m;
+}
+
+//int** hillCypher(int **m, int **k, int size,int l)
+//{
+//	int **temp;
+//	int tempR = 0,tempC = 0;
+//	int mR = 0, mC = 0;
+//	temp[tempR][tempC] = 0;
+//	for (int t = 0; t < l; t++)// lap length/2 
+//	{
+//		for (int i = 0; i < size; i++)//row
+//		{
+//			for (int j = 0; j < size; j++)//coll
+//			{
+//				//temp[0++][0] += key[0][0++]*m[0++][0]
+//				temp[tempR++][tempC] += k[i][j] * m[mR++][mC];   //a*x+b*y
+//			}
+//		}
+//	}
+//}
+
 int main()
 {
 	int size;
@@ -91,5 +155,8 @@ int main()
 	cout << str<<endl<<"Size: "<<size<<endl;
 	int **m = createMatrix(str, size);
 	printMatrix(m, size, str.length()/size);
+	cout << "Key: "<<endl;
+	int **key = generateKey(size);
+	printMatrix(key, size, size);
 	system("pause");
 }
