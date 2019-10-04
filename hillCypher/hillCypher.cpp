@@ -42,6 +42,7 @@ string formatString(string a, int &l,int size)
 			for (int i = l; (i % size) != 0; i++)
 			{
 				a += "Z";
+				l++;
 			}
 	}
 	return a;
@@ -57,8 +58,8 @@ int** createMatrix(string a,int s)
 		m[i] = new int[columns];		
 		for (int j = 0; j<columns; j++)		
 		{
-			m[i][j] = a[index];
-			index += s;
+			m[i][j] = a[index] - 64;// chuyen ASCIII ve alphabet 26
+			index += s;//them chu cach chu hien tai s don vi vao hang tiep theo vd: abcd thi a -> c
 		}
 		index = ++temp;
 	}
@@ -79,6 +80,7 @@ bool checkMod(int **a,int size)
 	switch (size)
 	{
 	case 2:
+		//>0 + <=25 + la so l?
 		if ((a[0][0] * a[1][1] - a[0][1] * a[1][0]) % 26 > 0 && (a[0][0] * a[1][1] - a[0][1] * a[1][0])<=25 && (a[0][0] * a[1][1] - a[0][1] * a[1][0])%2 !=0)
 		{
 			cout << endl<< (a[0][0] * a[1][1] - a[0][1] * a[1][0])<<endl;
@@ -118,24 +120,34 @@ int** generateKey(int size)
 	return m;
 }
 
-//int** hillCypher(int **m, int **k, int size,int l)
-//{
-//	int **temp;
-//	int tempR = 0,tempC = 0;
-//	int mR = 0, mC = 0;
-//	temp[tempR][tempC] = 0;
-//	for (int t = 0; t < l; t++)// lap length/2 
-//	{
-//		for (int i = 0; i < size; i++)//row
-//		{
-//			for (int j = 0; j < size; j++)//coll
-//			{
-//				//temp[0++][0] += key[0][0++]*m[0++][0]
-//				temp[tempR++][tempC] += k[i][j] * m[mR++][mC];   //a*x+b*y
-//			}
-//		}
-//	}
-//}
+int** hillCypher(int **m, int **k, int size,int l)
+{
+	int **temp;
+	int kR = 0, kC=0;//key row, key coll
+	int mR = 0, mC = 0;//matrix row, matrix coll
+	temp = new int*[size];
+	int columns = l/size;
+	for (int i = 0; i<size; i++)
+	{
+		temp[i] = new int[columns];
+		for (int j = 0; j<columns; j++)//giai quyet coll
+		{
+			if(size == 2)
+			{
+				temp[i][j] = ((k[kR][kC]*m[mR][mC])+(k[kR][kC+1]*m[mR+1][mC])) % 26;//a*x+b*y
+				mC++;//next coll
+			}
+			else if(size == 3)
+			{
+				temp[i][j] = ((k[kR][kC] * m[mR][mC]) + (k[kR][kC + 1] * m[mR + 1][mC]) + (k[kR][kC + 2] * m[mR + 2][mC])) % 26;//a*x+b*y
+				mC++;//next coll
+			}
+		}
+		mC = 0;
+		kR++;
+	}
+	return temp;
+}
 
 int main()
 {
@@ -158,5 +170,9 @@ int main()
 	cout << "Key: "<<endl;
 	int **key = generateKey(size);
 	printMatrix(key, size, size);
+	//cout << endl << "hang va cot:" << size << "," << l << endl;
+	cout << endl << "Encrypt: "<<endl;
+	int **value = hillCypher(m, key, size, l);
+	printMatrix(value, size, l/size);
 	system("pause");
 }
