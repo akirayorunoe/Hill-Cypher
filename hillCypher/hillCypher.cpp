@@ -31,14 +31,8 @@ string formatString(string a, int &l,int size)
 	a.resize(l);
 	//chuyen string ve digraph(trigraph)
 	if ((l % size) != 0) {
-		//if (l < size) // TH string co char < size matrix vd 1,2/3 or 1/2
-		//{
-		//	for (int i = l; i < size; i++)
-		//	{
-		//		a += "Z";
-		//	}
-		//}
-		//else //TH string co char >size matrix vd 4,5/3 or 3/2
+	// TH string co char < size matrix vd 1,2/3 or 1/2
+	 //TH string co char >size matrix vd 4,5/3 or 3/2
 			for (int i = l; (i % size) != 0; i++)
 			{
 				a += "Z";
@@ -80,15 +74,15 @@ bool checkMod(int **a,int size)
 	switch (size)
 	{
 	case 2:
-		//>0 + <=25 + la so l?
-		if ((a[0][0] * a[1][1] - a[0][1] * a[1][0]) % 26 > 0 && (a[0][0] * a[1][1] - a[0][1] * a[1][0])<=25 && (a[0][0] * a[1][1] - a[0][1] * a[1][0])%2 !=0)
+		//>0 + <=25 + la so le + !=13
+		if ((a[0][0] * a[1][1] - a[0][1] * a[1][0]) != 13 &&(a[0][0] * a[1][1] - a[0][1] * a[1][0]) % 26 > 0 && (a[0][0] * a[1][1] - a[0][1] * a[1][0])<=25 && (a[0][0] * a[1][1] - a[0][1] * a[1][0])%2 !=0)
 		{
 			cout << endl<< (a[0][0] * a[1][1] - a[0][1] * a[1][0])<<endl;
 			return true;
 		}
 		break;
 	case 3: 
-		if ((a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) % 26 > 0 && (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) <= 25 && (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) % 2 !=0)
+		if ((a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) != 13 && (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) % 26 > 0 && (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) <= 25 && (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0])) % 2 !=0)
 		{
 			cout <<endl<< (a[0][0] * (a[1][1] * a[2][2] - a[1][2] * a[2][1]) - a[0][1] * (a[1][0] * a[2][2] - a[1][2] * a[2][0]) + a[0][2] * (a[1][0] * a[2][1] - a[1][1] * a[2][0]))<<endl;
 			return true;
@@ -103,7 +97,7 @@ bool checkMod(int **a,int size)
 int** generateKey(int size)
 {
 	int **m;
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	m = new int*[size];
 	
 	do {
@@ -149,6 +143,24 @@ int** hillCypher(int **m, int **k, int size,int l)
 	return temp;
 }
 
+void toString(int **a, int hang, int cot)
+{
+	int i = 0;
+	int r = 0, c = 0;
+	int condition = hang*cot;
+	char *temp = new char[condition];
+		while (condition >= 0)
+		{
+			if (r == hang) { r = 0; c++;}
+			temp[i] = a[r++][c]+64;
+			if (temp[i] == 64) { temp[i] = 90; }
+			i++;
+			condition--;
+		}
+		temp[hang*cot] = '\0';
+		cout << endl << temp<<endl;
+}
+
 int main()
 {
 	int size;
@@ -170,9 +182,10 @@ int main()
 	cout << "Key: "<<endl;
 	int **key = generateKey(size);
 	printMatrix(key, size, size);
-	//cout << endl << "hang va cot:" << size << "," << l << endl;
 	cout << endl << "Encrypt: "<<endl;
 	int **value = hillCypher(m, key, size, l);
 	printMatrix(value, size, l/size);
+	cout << endl;
+	toString(value, size, l / size);
 	system("pause");
 }
